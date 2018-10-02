@@ -15,22 +15,14 @@ namespace soundtojson
             if (!Directory.Exists("music"))
                 return;
 
-            DataSet dataSet = new DataSet();
-            dataSet.Namespace = "NetFrameWork";
+            Dictionary<string, Category> soundsFile = new Dictionary<string, Category>();
             DirectoryInfo deathDir = new DirectoryInfo("death");
-            DataTable deathSounds = new DataTable("sounds");
-            DataColumn name = new DataColumn("name");
-            DataColumn stream = new DataColumn("stream", typeof(bool));
-            deathSounds.Columns.Add(name);
-            deathSounds.Columns.Add(stream);
-            dataSet.Tables.Add(deathSounds);
+            Category death = new Category("fortress.death");
+            soundsFile["fortress.death"] = death;
             foreach (FileInfo file in deathDir.EnumerateFiles())
             {
                 string songName = file.Name.Substring(0, file.Name.Length - 4);
-                DataRow row = deathSounds.NewRow();
-                row["name"] = songName;
-                row["stream"] = true;
-                deathSounds.Rows.Add(row);
+                death.addSound(songName, true);
             }
 
 
@@ -48,27 +40,37 @@ namespace soundtojson
             //    }
             //}
 
-            dataSet.AcceptChanges();
-            string json = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+            string json = JsonConvert.SerializeObject(soundsFile, Formatting.Indented);
             Console.WriteLine(json);
             Console.ReadLine();
         }
     }
 
-    class Song
-    {
-        public string Name { get; set; }
-        public bool Stream { get; set; }
-
-        public Song(string name)
-        {
-            this.Name = name;
-            Stream = true;
-        }
-    }
-
     class Category
     {
-        public Song Song { get; set; }
+        //public DataSet DataSet { get; set; }
+        public DataTable sounds { get; set; }
+
+        public Category(string name)
+        {
+            //DataSet = new DataSet(name);
+            //DataSet.Namespace = "NetFrameWork";
+
+            sounds = new DataTable("sounds");
+            DataColumn nameColumn = new DataColumn("name");
+            DataColumn stream = new DataColumn("stream", typeof(bool));
+            sounds.Columns.Add(nameColumn);
+            sounds.Columns.Add(stream);
+            //DataSet.Tables.Add(sounds);
+        }
+
+        public void addSound(string name, bool stream)
+        {
+            DataRow row = sounds.NewRow();
+            row["name"] = name;
+            row["stream"] = stream;
+            sounds.Rows.Add(row);
+            //DataSet.AcceptChanges();
+        }
     }
 }
