@@ -24,7 +24,7 @@ namespace soundtojson
             foreach (FileInfo file in deathDir.EnumerateFiles())
             {
                 string songName = file.Name.Substring(0, file.Name.Length - 4);
-                death.addSound(songName, true);
+                death.addSound("death/" + songName, true);
             }
 
 
