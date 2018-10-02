@@ -40,9 +40,20 @@ namespace soundtojson
                 }
             }
 
+            DirectoryInfo voiceDir = new DirectoryInfo("assets\\minecraft\\sounds\\voice");
+            foreach (DirectoryInfo directory in voiceDir.GetDirectories())
+            {
+                foreach (FileInfo file in directory.EnumerateFiles())
+                {
+                    Category category = new Category();
+                    string songName = file.Name.Substring(0, file.Name.Length - 4);
+                    soundsFile["tts." + songName] = category;
+                    category.addSound("voice/" + directory.Name + "/" + songName, false);
+                }
+            }
+
             string json = JsonConvert.SerializeObject(soundsFile, Formatting.Indented);
-            Console.WriteLine(json);
-            Console.ReadLine();
+            File.WriteAllText("sounds.json", json);
         }
     }
 
