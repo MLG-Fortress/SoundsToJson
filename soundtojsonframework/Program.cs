@@ -10,14 +10,16 @@ namespace soundtojson
     {
         static void Main(string[] args)
         {
-            if (!Directory.Exists("death"))
+            if (!Directory.Exists("assets\\minecraft\\sounds\\music"))
                 return;
-            if (!Directory.Exists("music"))
+            if (!Directory.Exists("assets\\minecraft\\sounds\\death"))
+                return;
+            if (!Directory.Exists("assets\\minecraft\\sounds\\voice"))
                 return;
 
             Dictionary<string, Category> soundsFile = new Dictionary<string, Category>();
-            DirectoryInfo deathDir = new DirectoryInfo("death");
-            Category death = new Category("fortress.death");
+            DirectoryInfo deathDir = new DirectoryInfo("assets\\minecraft\\sounds\\death");
+            Category death = new Category();
             soundsFile["fortress.death"] = death;
             foreach (FileInfo file in deathDir.EnumerateFiles())
             {
@@ -26,19 +28,17 @@ namespace soundtojson
             }
 
 
-            //DirectoryInfo musicDir = new DirectoryInfo("music");
-            //foreach (DirectoryInfo directory in musicDir.GetDirectories())
-            //{
-            //    foreach (FileInfo file in directory.EnumerateFiles())
-            //    {
-            //        string songName = file.Name.Substring(0, file.Name.Length - 3);
-            //        DataTable table = new DataTable();
-            //        table.TableName = "music." + directory.Name + "." + songName;
-            //        DataColumn name = new DataColumn("name");
-            //        DataR
-            //        DataColumn stream = new DataColumn("stream", typeof(bool));
-            //    }
-            //}
+            DirectoryInfo musicDir = new DirectoryInfo("assets\\minecraft\\sounds\\music");
+            foreach (DirectoryInfo directory in musicDir.GetDirectories())
+            {
+                foreach (FileInfo file in directory.EnumerateFiles())
+                {
+                    Category category = new Category();
+                    string songName = file.Name.Substring(0, file.Name.Length - 4);
+                    soundsFile["music." + directory.Name + "." + songName] = category;
+                    category.addSound("music/" + directory.Name + "/" + songName, true);
+                }
+            }
 
             string json = JsonConvert.SerializeObject(soundsFile, Formatting.Indented);
             Console.WriteLine(json);
@@ -51,7 +51,7 @@ namespace soundtojson
         //public DataSet DataSet { get; set; }
         public DataTable sounds { get; set; }
 
-        public Category(string name)
+        public Category()
         {
             //DataSet = new DataSet(name);
             //DataSet.Namespace = "NetFrameWork";
